@@ -10,8 +10,8 @@
 #include <array>
 #include <cstdlib>
 #include <cstring>
-#include <EASTL/map.h>
-#include <EASTL/vector.h>
+#include <map>
+#include <vector>
 
 
 namespace
@@ -192,8 +192,8 @@ int main(int argc, char** argv)
 					{
 						// begin abortable region: start_next_bitmap_inner
 						{
-							eastl::map<png_color, char, png_color_cmp> palette_map;
-							eastl::vector<std::unique_ptr<char[]>> pixel_rows;
+							std::map<png_color, char, png_color_cmp> palette_map;
+							std::vector<std::unique_ptr<char[]>> pixel_rows;
 							std::array<png_color, 256> palette;
 							unsigned char palette_size = 0;
 							std::unique_ptr<char[]> linebuf(new char[dib.width() * 4]);

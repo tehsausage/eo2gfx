@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <EASTL/map.h>
+#include <map>
 #include <utility>
 
 class pe_reader
@@ -73,7 +73,7 @@ class pe_reader
 
 		bool read_header();
 
-		eastl::map<int, std::pair<std::size_t, std::size_t>> read_bitmap_table();
+		std::map<int, std::pair<std::size_t, std::size_t>> read_bitmap_table();
 
 		bool read_resource(char* buf, std::pair<std::size_t, std::size_t> offsets);
 

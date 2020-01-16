@@ -3,7 +3,6 @@ set(gfxdump_ALL_SOURCE_FILES
 	src/cio/cio.hpp
 	src/dib_reader.cpp
 	src/dib_reader.hpp
-	src/gfxdump/eastl_allocator.cpp
 	src/gfxdump/main.cpp
 	src/int_pack.hpp
 	src/my_cstrcat.cpp
@@ -19,7 +18,6 @@ set(gfxdump_ALL_SOURCE_FILES
 set(eoatlas_ALL_SOURCE_FILES
 	src/cio/cio.cpp
 	src/cio/cio.hpp
-	src/eoatlas/eastl_allocator.cpp
 	src/eoatlas/main.cpp
 	src/sha256/sha256.c
 	src/sha256/sha256.h

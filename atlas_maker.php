@@ -151,7 +151,7 @@ function generate_atlas_sane($egfname, $algo)
 
 		$offs = array_map(
 			function($a) { return explode(',', $a); },
-			explode(';', file_get_contents($tmpname . '.offs'))
+			explode(';', file_get_contents($tmpname . '.offs2'))
 		);
 
 		$outputs[$sha256] = $tmpname;

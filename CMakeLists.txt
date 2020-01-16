@@ -50,13 +50,12 @@ install(TARGETS eoatlas RUNTIME DESTINATION .)
 include_directories(src)
 
 find_package(PNG REQUIRED)
-find_package(EASTL REQUIRED)
 
-target_include_directories(gfxdump SYSTEM PRIVATE ${PNG_INCLUDE_DIR} ${EASTL_INCLUDE_DIR})
-target_link_libraries(gfxdump ${PNG_LIBRARY} ${EASTL_LIBRARY})
+target_include_directories(gfxdump SYSTEM PRIVATE ${PNG_INCLUDE_DIR})
+target_link_libraries(gfxdump ${PNG_LIBRARY})
 
-target_include_directories(eoatlas SYSTEM PRIVATE ${PNG_INCLUDE_DIR} ${EASTL_INCLUDE_DIR})
-target_link_libraries(eoatlas ${PNG_LIBRARY} ${EASTL_LIBRARY})
+target_include_directories(eoatlas SYSTEM PRIVATE ${PNG_INCLUDE_DIR})
+target_link_libraries(eoatlas ${PNG_LIBRARY})
 
 # ---------------------
 #  Precompiled Headers

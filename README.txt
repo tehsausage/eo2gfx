@@ -1,16 +1,14 @@
 Building:
 	Dependencies:
 		libpng
-		EASTL
 
 	Steps:
-		$ cmake path/to/eo2gfx/source/folder .
+		$ cmake .
 		$ make
 
 Setup:
 	Step 1:
-		$ mkdir atlas atlas/gfx atlas/gfxdupe dump atlastmp
-		(Ideally place "dump" and "atlastmp" directories on a ramdisk)
+		$ mkdir atlas2 atlas2/gfx atlas2/gfxdupe dump atlastmp
 
 	Step 2:
 		Make a sub-folder called "gfx" which contains all EO EGF
@@ -19,6 +17,7 @@ Setup:
 Usage:
 	Dependencies:
 		PHP
+		imagemagick
 		pngcrush
 
 	Step 1:
@@ -34,15 +33,15 @@ Usage:
 		Takes dumped files from ./gfx and packs them in to vertically
 		  aligned atlasses as specified by the hard-coded rules (starting
 		  at approx line 300) and dumps packed images to:
-		  	./atlas/gfx/################.png  (#s represent an 8 byte
+		  	./atlas2/gfx/################.png  (#s represent an 8 byte
 		  	                                   hash of the image content)
 		  referenced by graphics table files:
-		  	./atlas/gfx###.table
+		  	./atlas2/gfx###.table
 		  which are a binary format describing the positions
 		  of the images in each atlas (E2GT format).
 
 		  Exact duplicate image files are dumped to
-		  	./atlas/gfxdupe
+		  	./atlas2/gfxdupe
 		  and can be ignored.
 
 		  Intermediate files are generated in:

@@ -1,7 +1,7 @@
 
 #include "png_reader.hpp"
 
-#include <EASTL/vector.h>
+#include <vector>
 
 bool png_reader::init()
 {
@@ -126,7 +126,7 @@ void png_reader::read_row(char* data)
 
 void png_reader::read_image(char* data, int stride)
 {
-	eastl::vector<png_bytep> row_pointers(info.height);
+	std::vector<png_bytep> row_pointers(info.height);
 
 	for (png_uint_32 i = 0; i < info.height; ++i)
 	{

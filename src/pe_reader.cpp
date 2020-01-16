@@ -4,7 +4,7 @@
 #include "int_pack.hpp"
 
 #include <cstring>
-#include <EASTL/vector.h>
+#include <vector>
 
 std::uint16_t pe_reader::read_u16_le()
 {
@@ -129,11 +129,11 @@ bool pe_reader::read_header()
 	return true;
 }
 
-eastl::map<int, std::pair<std::size_t, std::size_t>> pe_reader::read_bitmap_table()
+std::map<int, std::pair<std::size_t, std::size_t>> pe_reader::read_bitmap_table()
 {
 	char buf[16];
 
-	eastl::map<int, std::pair<std::size_t, std::size_t>> bitmap_pointers;
+	std::map<int, std::pair<std::size_t, std::size_t>> bitmap_pointers;
 
 	if (bitmap_directory_entry.ResourceType_ != ResourceType::Bitmap)
 		return bitmap_pointers;
@@ -147,7 +147,7 @@ eastl::map<int, std::pair<std::size_t, std::size_t>> pe_reader::read_bitmap_tabl
 
 	unsigned int directory_entries = bitmap_directory.NumberOfNamedEntries + bitmap_directory.NumberOfIdEntries;
 
-	eastl::vector<ResourceDirectoryEntry> bitmap_entries;
+	std::vector<ResourceDirectoryEntry> bitmap_entries;
 	bitmap_entries.reserve(directory_entries);
 
 	ResourceDirectoryEntry entry;

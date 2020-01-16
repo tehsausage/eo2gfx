@@ -60,7 +60,7 @@ $noalpha = array(
 
 foreach ($noalpha as $sha256)
 {
-	$gfxname = 'atlas/gfx/' . $sha256 . '.png';
+	$gfxname = 'atlas2/gfx/' . $sha256 . '.png';
 	$tmpname = 'atlastmp/x.png';
 	echo "Fixing $sha256...\n";
 

@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <array>
 #include <memory>
-#include <EASTL/map.h>
-#include <EASTL/vector.h>
+#include <map>
+#include <vector>
 
 namespace
 {
@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 			int y_adj;
 		};
 
-		eastl::vector<Input> inputs;
+		std::vector<Input> inputs;
 		int inputpos = 0;
 
 		while (argpos < argc)
@@ -230,8 +230,8 @@ int main(int argc, char** argv)
 			DEBUG_LOG("Generating atlas: " << filename << ": " << output_width << 'x' << output_height)
 
 			{
-				eastl::map<png_color, char, png_color_cmp> palette_map;
-				eastl::vector<std::unique_ptr<char[]>> pixel_rows;
+				std::map<png_color, char, png_color_cmp> palette_map;
+				std::vector<std::unique_ptr<char[]>> pixel_rows;
 				std::array<png_color, 256> palette;
 				unsigned char palette_size = 0;
 
