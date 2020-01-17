@@ -46,8 +46,20 @@ static void generate_scale_table(int* table, int entries)
 {
 	int i;
 
+	int tblsize = entries - 1;
+
 	for (i = 0; i < entries; ++i)
-		table[i] = i * 255 / (entries - 1);
+	{
+		// This formula rounds down
+		// e.g. 12 * 255 / 31 = 98.709  ->  98
+		//table[i] = i * 255 / tblsize;
+
+		// This formula rounds up from half
+		// e.g 20 * 255 / 31 = 164.516 -> 165
+		int x = i * 510 / tblsize;
+		int lsb = x & 1;
+		table[i] = (x + lsb) / 2;
+	}
 }
 
 const char* dib_reader::check_format() const
