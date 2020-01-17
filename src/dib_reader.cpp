@@ -55,9 +55,13 @@ static void generate_scale_table(int* table, int entries)
 		//table[i] = i * 255 / tblsize;
 
 		// This formula rounds up from half
-		// e.g 20 * 255 / 31 = 164.516 -> 165
+		// e.g. 19 * 255 / 31 = 156.29   ->  156
+		//      20 * 255 / 31 = 164.516  ->  165
 		int x = i * 510 / tblsize;
+		// If lsb is set after (x/(y*2)), then (x/y) would have had a decimal
+		//   component that is 0.5 or greater.
 		int lsb = x & 1;
+		// Adding the lsb bumps up the result by 1 after divison by 2
 		table[i] = (x + lsb) / 2;
 	}
 }

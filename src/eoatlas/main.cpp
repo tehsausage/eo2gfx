@@ -277,10 +277,16 @@ int main(int argc, char** argv)
 					char digest[32];
 					char cdigest[65];
 					sha256_start(&hash_ctx);
+					
+					std::unique_ptr<char[]> hashlinebuf(new char[stride]);
 
 					for (int y = 0; y < output_height; ++y)
 					{
-						sha256_update(&hash_ctx, &databuf[SAFETY_BUFFER/2] + stride * y, stride);
+						// Ignore the colour conversion data for image hashing
+						for (int i = 0; i < stride; ++i)
+							hashlinebuf[i] = *((unsigned char*)&databuf[SAFETY_BUFFER/2] + stride * y + i) & 0xF8;
+
+						sha256_update(&hash_ctx, hashlinebuf.get(), stride);
 					}
 
 					sha256_finish(&hash_ctx, digest);
