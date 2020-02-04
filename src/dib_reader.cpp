@@ -16,7 +16,7 @@ static int* get_convert_table(int bit)
 	return &convert_table[(2 << bit) - 2];
 }
 
-static void decode_bitfield(uint32_t m, int& shift_out, uint32_t& mask_out)
+static void decode_bitfield(std::uint32_t m, int& shift_out, std::uint32_t& mask_out)
 {
 	int shift = 0;
 
@@ -44,25 +44,11 @@ static void decode_bitfield(uint32_t m, int& shift_out, uint32_t& mask_out)
 
 static void generate_scale_table(int* table, int entries)
 {
-	int i;
-
 	int tblsize = entries - 1;
 
-	for (i = 0; i < entries; ++i)
+	for (int i = 0; i < entries; ++i)
 	{
-		// This formula rounds down
-		// e.g. 12 * 255 / 31 = 98.709  ->  98
-		//table[i] = i * 255 / tblsize;
-
-		// This formula rounds up from half
-		// e.g. 19 * 255 / 31 = 156.29   ->  156
-		//      20 * 255 / 31 = 164.516  ->  165
-		int x = i * 510 / tblsize;
-		// If lsb is set after (x/(y*2)), then (x/y) would have had a decimal
-		//   component that is 0.5 or greater.
-		int lsb = x & 1;
-		// Adding the lsb bumps up the result by 1 after divison by 2
-		table[i] = (x + lsb) / 2;
+		table[i] = (i * 510 + tblsize) / tblsize / 2;
 	}
 }
 
@@ -85,6 +71,26 @@ const char* dib_reader::check_format() const
 	if (rm > maxmask || gm > maxmask || bm > maxmask || am > maxmask)
 		return "Bit mask too long";
 
+	if (depth() == 16)
+	{
+		if (compression() == BitFields)
+		{
+			std::uint32_t l_gm;
+			int l_gs;
+
+			decode_bitfield(green_mask(), l_gs, l_gm);
+
+			if (l_gm == 0x3f)
+				printf("depth = 16 (565) %x\n", l_gm);
+			else
+				printf("depth = 16 (555)\n");
+		}
+		else
+			printf("depth = 16 (555)\n");
+	}
+	else
+		printf("depth = %d (888)\n", depth());
+
 	return nullptr;
 }
 
@@ -96,6 +102,7 @@ void dib_reader::start()
 		decode_bitfield(green_mask(), gs, gm);
 		decode_bitfield(blue_mask(),  bs, bm);
 		decode_bitfield(alpha_mask(), as, am);
+		//printf("BITFIELD: %02x %02x %02x %02x\n", rm, gm, bm, am);
 	}
 	else
 	{
@@ -120,7 +127,7 @@ void dib_reader::start()
 
 	for (int i = 0; i < NUM_CONVERT_TABLES; ++i)
 	{
-		uint32_t mask = ~(0xFFFFFFFFU << (i+1)) & 0xFFFFFFFFU;
+		std::uint32_t mask = ~(0xFFFFFFFFU << (i+1)) & 0xFFFFFFFFU;
 
 		int* table = get_convert_table(i);
 		int entries = (1 << (i+1));
@@ -146,17 +153,17 @@ void dib_reader::read_line(char* outbuf, int row)
 	for (int i = 0; i < width(); i++)
 	{
 		std::size_t pixel_offset = linebuf - data_ptr;
-		uint32_t pixel;
+		std::uint32_t pixel;
 
 		if (pixel_offset < data_size)
 			pixel = read_u32_le(pixel_offset);
 		else
 			pixel = 0;
 
-		char r = static_cast<char>(rtable[((pixel >> rs) & rm)]);
-		char g = static_cast<char>(gtable[((pixel >> gs) & gm)]);
-		char b = static_cast<char>(btable[((pixel >> bs) & bm)]);
-		char a = static_cast<char>((pixel != 0) * 0xFF);
+		std::uint8_t r = static_cast<std::uint8_t>(rtable[((pixel >> rs) & rm)]);
+		std::uint8_t g = static_cast<std::uint8_t>(gtable[((pixel >> gs) & gm)]);
+		std::uint8_t b = static_cast<std::uint8_t>(btable[((pixel >> bs) & bm)]);
+		std::uint8_t a = static_cast<std::uint8_t>(((r|g|b) != 0) * 0xFF);
 
 		outbuf[0] = r;
 		outbuf[1] = g;

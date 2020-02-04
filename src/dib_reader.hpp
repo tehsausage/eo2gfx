@@ -14,8 +14,8 @@ class dib_reader
 		const char* data_ptr;
 		std::size_t data_size;
 
-		int      rs, gs, bs, as;
-		uint32_t rm, gm, bm, am;
+		int           rs, gs, bs, as;
+		std::uint32_t rm, gm, bm, am;
 
 		int* rtable = nullptr;
 		int* gtable = nullptr;
@@ -57,17 +57,30 @@ class dib_reader
 			, data_size(data_size)
 		{ }
 
-		bool          v2_format()    const noexcept { return header_size() >= 52; }
-		bool          v3_format()    const noexcept { return header_size() >= 56; }
-		
 		std::int32_t  header_size()  const noexcept { return read_u32_le(0); }
+
 		std::int32_t  width()        const noexcept { return read_u32_le(4); }
 		std::int32_t  height()       const noexcept { return read_u32_le(8); }
 		std::int16_t  color_planes() const noexcept { return 1; }
 		std::int16_t  depth()        const noexcept { return read_u16_le(14); }
 		Compression   compression()  const noexcept { return Compression(read_u32_le(16)); }
 		std::uint32_t image_size()   const noexcept { return read_u32_le(20); }
-		std::size_t   palette_size() const noexcept { return (!v2_format() && compression() == BitFields) * 12; }
+		std::int32_t  hres()         const noexcept { return read_u32_le(24); }
+		std::int32_t  vres()         const noexcept { return read_u32_le(28); }
+		std::size_t   palette_size() const noexcept
+		{
+			std::size_t size = 0;
+			std::uint32_t colors_used = read_u32_le(32);
+
+			if (colors_used)
+				size += colors_used * (1U << (bpp() - 1)) * bpp();
+
+			if (header_size() < 52 && compression() == Compression::BitFields)
+				size += 12;
+
+			return size;
+		}
+
 		const char*   data()         const noexcept { return reinterpret_cast<const char*>(data_ptr + header_size() + palette_size()); }
 		const char*   palette()      const noexcept { return reinterpret_cast<const char*>(data_ptr + header_size()); }
 		const char*   raw_data()     const noexcept { return reinterpret_cast<const char*>(data_ptr); }
@@ -76,25 +89,19 @@ class dib_reader
 		std::int32_t  stride()       const noexcept { return width() * bpp() + ((4U - (width() * bpp())) & 3); }
 
 		std::uint32_t red_mask()     const noexcept {
-			return v2_format()
-				? read_u32_le(40)
-				: read_u32_le(header_size());
+			return read_u32_le(40);
 		}
 
 		std::uint32_t green_mask()   const noexcept {
-			return v2_format()
-				? read_u32_le(44)
-				: read_u32_le(header_size() + 4);
+			return read_u32_le(44);
 		}
 
 		std::uint32_t blue_mask()    const noexcept {
-			return v2_format()
-				? read_u32_le(48)
-				: read_u32_le(header_size() + 8);
+			return read_u32_le(48);
 		}
 
 		std::uint32_t alpha_mask()   const noexcept {
-			return v3_format()
+			return header_size() >= 56
 				? read_u32_le(52)
 				: 0;
 		}

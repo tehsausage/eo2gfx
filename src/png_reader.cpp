@@ -80,10 +80,8 @@ png_reader_info png_reader::read_header()
 	    	png_set_expand_gray_1_2_4_to_8(png_ptr.get());
 	    	info.bit_depth = 8;
 	    }
-	    else
-	    {
-	    	png_set_gray_to_rgb(png_ptr.get());
-	    }
+
+		png_set_gray_to_rgb(png_ptr.get());
 
     	info.color_type = PNG_COLOR_TYPE_RGB;
     }

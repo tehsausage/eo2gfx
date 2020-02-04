@@ -22,10 +22,10 @@ namespace
 	int compression_level = 2;
 }
 
-#define DEBUG_LOG(x) if (debug_flag) { (cio::err << "DEBUG: " << x) << cio::endl; }
+#define DEBUG_LOG(x) if (debug_flag) { (cio::out << "DEBUG: " << x) << cio::endl; }
 //#define DEBUG_LOG(x) { ; }
 
-#define DEBUG_LOG_VERBOSE(x) if (debug_verbose_flag) { (cio::err << "DEBUG: " << x) << cio::endl; }
+#define DEBUG_LOG_VERBOSE(x) if (debug_verbose_flag) { (cio::out << "DEBUG: " << x) << cio::endl; }
 //#define DEBUG_LOG(x) { ; }
 
 #define ABORT_ON(cond, msg) \
@@ -158,6 +158,7 @@ int main(int argc, char** argv)
 
 			for (auto resource : table)
 			{
+				DEBUG_LOG("ID: " << resource.first)
 				// begin abortable region: start_next_bitmap
 				{
 					int id = resource.first;
@@ -209,10 +210,10 @@ int main(int argc, char** argv)
 
 							// This is a setjmp call and must follow the rules of setjmp where each
 							//   call to a libpng function is considered to be a longjmp.
-							PNG_WRITER_CATCH(png)
-							{
-								ABORT_ON_FILE_ID_INNER(true, "libpng error")
-							}
+							//PNG_WRITER_CATCH(png)
+							//{
+							//	ABORT_ON_FILE_ID_INNER(true, "libpng error")
+							//}
 
 							// First pass generates palette entries and create pixel rows
 							if (!true_color)

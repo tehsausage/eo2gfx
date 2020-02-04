@@ -160,9 +160,7 @@ int main(int argc, char** argv)
 
 				bool hit_pixels = false;
 
-				volatile int canary1 = 0x5A5A5A5A;
 				std::unique_ptr<char[]> linebuf(new char[header.rowbytes]);
-				volatile int canary2 = 0xA5A5A5A5;
 
 				for (int y = 0; y < rows; ++y)
 				{
@@ -238,6 +236,9 @@ int main(int argc, char** argv)
 				int stride = output_width * 4;
 				std::unique_ptr<char[]> databuf(new char[(stride * output_height) + SAFETY_BUFFER]);
 
+				for (int i = 0; i < (stride * output_height) + SAFETY_BUFFER; ++i)
+					databuf[i] = 0;
+
 				{
 					int col = 0;
 
@@ -271,7 +272,7 @@ int main(int argc, char** argv)
 				}
 
 				{
-					DEBUG_LOG("Calculating hash...");
+					DEBUG_LOG("Calculating hash...")
 
 					sha256_context hash_ctx{};
 					char digest[32];
@@ -283,8 +284,14 @@ int main(int argc, char** argv)
 					for (int y = 0; y < output_height; ++y)
 					{
 						// Ignore the colour conversion data for image hashing
+						// Also ignore alpha channel
 						for (int i = 0; i < stride; ++i)
-							hashlinebuf[i] = *((unsigned char*)&databuf[SAFETY_BUFFER/2] + stride * y + i) & 0xF8;
+						{
+							if (i % 4 == 3)
+								hashlinebuf[i] = 0x00;
+							else
+								hashlinebuf[i] = *((unsigned char*)&databuf[SAFETY_BUFFER/2] + stride * y + i) & 0xF8;
+						}
 
 						sha256_update(&hash_ctx, hashlinebuf.get(), stride);
 					}
@@ -293,11 +300,11 @@ int main(int argc, char** argv)
 					sha256_to_hex(digest, 32, cdigest);
 					cdigest[64] = '\0';
 
-					DEBUG_LOG(cdigest);
+					DEBUG_LOG(cdigest)
 
 					{
 						auto hash_output_filename = my_cstrcat(output_filename, ".sha256");
-						DEBUG_LOG_VERBOSE("Creating file: " << hash_output_filename.get());
+						DEBUG_LOG_VERBOSE("Creating file: " << hash_output_filename.get())
 						cio::stream sha256_out_file(hash_output_filename.get(), cio::stream::mode_write);
 						sha256_out_file.write(cdigest);
 					}
@@ -306,7 +313,7 @@ int main(int argc, char** argv)
 				{
 					{
 						auto offs_output_filename = my_cstrcat(output_filename, ".offs2");
-						DEBUG_LOG_VERBOSE("Creating file: " << offs_output_filename.get());
+						DEBUG_LOG_VERBOSE("Creating file: " << offs_output_filename.get())
 						cio::stream offs_out_file(offs_output_filename.get(), cio::stream::mode_write);
 
 						int col = 0;
@@ -324,7 +331,7 @@ int main(int argc, char** argv)
 					}
 				}
 
-				DEBUG_LOG_VERBOSE("Creating file: " << output_filename);
+				DEBUG_LOG_VERBOSE("Creating file: " << output_filename)
 				cio::stream png_out_file(output_filename, cio::stream::mode_write);
 
 				ABORT_ON_FILE(!png_out_file.is_open(), "Failed to open " << output_filename << " for writing.")
@@ -374,7 +381,7 @@ int main(int argc, char** argv)
 								if (palette_size == 0)
 								{
 									pixel_rows.clear();
-									DEBUG_LOG(output_filename << " has more than 255 colours, generating true colour");
+									DEBUG_LOG(output_filename << " has more than 255 colours, generating true colour")
 									goto end_palette_pass;
 								}
 							}
@@ -389,7 +396,7 @@ int main(int argc, char** argv)
 				}
 				end_palette_pass:
 
-				DEBUG_LOG_VERBOSE("Palette size: " << int(palette_size));
+				DEBUG_LOG_VERBOSE("Palette size: " << int(palette_size))
 
 				if (palette_size == 0)
 				{
