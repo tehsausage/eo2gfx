@@ -158,7 +158,7 @@ function generate_atlas_sane($egfname, $algo)
 
 		foreach ($fileids as $n => $id)
 		{
-			$table[$fileids[$n]] = array($sha256, $n, $offs[$n]);
+			$table[$fileids[$n]] = array($sha256, $id, $offs[$n]);
 		}
 	}
 
