@@ -1,0 +1,14 @@
+CMakeCache.txt
+CMakeFiles/
+Makefile
+atlas2*
+atlastmp/
+bmpinfo
+cmake_install.cmake
+dump/
+eoatlas*
+fmtid
+gfx/
+gfxdump*
+libeo2gfx_*
+png2bmp
